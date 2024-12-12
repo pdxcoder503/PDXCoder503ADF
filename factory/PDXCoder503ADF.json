@@ -1,0 +1,9 @@
+{
+	"name": "PDXCoder503ADF",
+	"location": "westus3",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "d0918ad9-ec20-413c-b683-6c66cea10cc8",
+		"tenantId": "9eae61d4-ede0-48a2-94d1-4e65eb5b70bb"
+	}
+}

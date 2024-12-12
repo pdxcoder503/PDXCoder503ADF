@@ -1,0 +1,25 @@
+{
+	"name": "DataLakeFileStorageTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "SPARKS-iPACS_DW_DIM_DATE",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/data/blobs/",
+			"blobPathEndsWith": "DIM_DATE.csv",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/966bf0e7-cf4c-4a12-9479-c58117694e24/resourceGroups/DevResourceGroup/providers/Microsoft.Storage/storageAccounts/pdxcoder503",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

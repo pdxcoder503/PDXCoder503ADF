@@ -1,0 +1,14 @@
+{
+	"name": "AzureFileStorage_Ouput",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "Output folder for staging ETL files.",
+		"annotations": [],
+		"type": "AzureFileStorage",
+		"typeProperties": {
+			"connectionString": "DefaultEndpointsProtocol=https;AccountName=pdxcoder503;EndpointSuffix=core.windows.net;",
+			"fileShare": "pdxcoder503fileshare",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDAzNDcwQzgwLTkzRTgtNDZCRC04MTExLURGMzhEOERBQTkwNV83MmUwYzczZi1kYWYyLTQwMDMtYWIxYy05MmEwNjMxYjJiZmIiDQp9"
+		}
+	}
+}

@@ -1,0 +1,104 @@
+{
+	"name": "iPACS_DW_DIM_Facility_Info",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase_iPACS_DW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Facility_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Facility_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Facility_Status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Facility_Type",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Street",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "State",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Zip",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Country",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Mailing_Address",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Phone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Map_Page",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Map_Section",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Parcel_Number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Latitude",
+				"type": "decimal",
+				"precision": 22,
+				"scale": 11
+			},
+			{
+				"name": "Longitude",
+				"type": "decimal",
+				"precision": 22,
+				"scale": 11
+			},
+			{
+				"name": "X_Coordinate",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 10
+			},
+			{
+				"name": "Y_Coordinate",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 10
+			},
+			{
+				"name": "GEO_Location_Type",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "etl",
+			"table": "DIM_Facility_Info"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

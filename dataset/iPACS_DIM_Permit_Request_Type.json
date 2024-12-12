@@ -1,0 +1,57 @@
+{
+	"name": "iPACS_DIM_Permit_Request_Type",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CWS5008_MSSQLSERVER2022",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "PERMIT_TYPE_CD",
+				"type": "varchar"
+			},
+			{
+				"name": "PERMIT_TYPE_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "PERMIT_TYPE_DESC",
+				"type": "varchar"
+			},
+			{
+				"name": "GROUP_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "PERMIT_FEE_AMOUNT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STATUS_CD",
+				"type": "varchar"
+			},
+			{
+				"name": "DEFAULT_PERMIT_STATUS_CD",
+				"type": "varchar"
+			},
+			{
+				"name": "DEFAULT_DURATION",
+				"type": "decimal",
+				"precision": 8,
+				"scale": 2
+			},
+			{
+				"name": "SMR_REQUIRED_IND",
+				"type": "char"
+			}
+		],
+		"typeProperties": {
+			"schema": "etl",
+			"table": "DIM_Permit_Request_Type"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

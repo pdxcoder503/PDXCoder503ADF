@@ -1,0 +1,232 @@
+{
+	"name": "SPARKS-iPACS_DW_DIM_DATE",
+	"properties": {
+		"activities": [
+			{
+				"name": "File_Modified_Date",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DIM_DATE_File",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"lastModified",
+						"size",
+						"itemName"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "LookupLastExeDate",
+				"description": "Get last extract date for incremental table loading.",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "File_Modified_Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT MAX([LastExtractedDateTime]) [LastExtractedDateTime] \nFROM [etl].[ChangeTracking]\nWHERE [Scope] = 'DimDate';",
+						"queryTimeout": "02:00:00",
+						"isolationLevel": "RepeatableRead",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "LastExtractedDateTime",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "If Condition Test Dates",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LookupLastExeDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greaterOrEquals(activity('File_Modified_Date').output.lastModified, activity('LookupLastExeDate').output.firstRow.LastExtractedDateTime\n)\n\n",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "LogDate",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[UpdateLastExtractedDateTime]",
+								"storedProcedureParameters": {
+									"Scope": {
+										"value": {
+											"value": "DimDateSkipped",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"LastExtractedDateTime": {
+										"value": {
+											"value": "@activity('File_Modified_Date').output.lastModified",
+											"type": "Expression"
+										},
+										"type": "Datetime"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase_iPACS_DW",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "ResetDate",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 3,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[UpdateLastExtractedDateTime]",
+								"storedProcedureParameters": {
+									"LastExtractedDateTime": {
+										"value": {
+											"value": "@activity('File_Modified_Date').output.lastModified",
+											"type": "Expression"
+										},
+										"type": "Datetime"
+									},
+									"Scope": {
+										"value": "DimDate",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase_iPACS_DW",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "SPARKS Data flow",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "ResetDate",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 3,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "DIM_DATE_Dataflow",
+									"type": "DataFlowReference"
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Reset Dates for Testing",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "If Condition Test Dates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase_iPACS_DW",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "UPDATE [iPACS_DW].[etl].[ChangeTracking]\nSET [LastExtractedDateTime] = '2020-01-01 00:00:00.000' \n,[LastUpdated] = GETDATE()\nWHERE [Scope] = 'DimDate';"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-12-11T23:08:02Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

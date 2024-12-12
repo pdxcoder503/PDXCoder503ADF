@@ -1,0 +1,34 @@
+{
+	"name": "iPACS_DW_DIM_Permit_Request_Type",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase_iPACS_DW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PMT_REQ_TYPE_CD",
+				"type": "varchar"
+			},
+			{
+				"name": "PMT_REQ_TYPE_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "PMT_REQ_TYPE_DESC",
+				"type": "varchar"
+			},
+			{
+				"name": "STATUS_CD",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "etl",
+			"table": "DIM_Permit_Request_Type"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

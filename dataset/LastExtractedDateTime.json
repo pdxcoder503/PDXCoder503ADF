@@ -1,0 +1,17 @@
+{
+	"name": "LastExtractedDateTime",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase_iPACS_DW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "etl",
+			"table": "ChangeTracking"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

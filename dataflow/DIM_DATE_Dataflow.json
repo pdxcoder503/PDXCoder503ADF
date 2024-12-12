@@ -1,0 +1,157 @@
+{
+	"name": "DIM_DATE_Dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DIM_DATE_File",
+						"type": "DatasetReference"
+					},
+					"name": "DimDatesFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "iPACS_DW_DIM_Date",
+						"type": "DatasetReference"
+					},
+					"name": "DimDateTargetTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "iPACS_DW_DIM_Date",
+						"type": "DatasetReference"
+					},
+					"name": "DIMDateTable",
+					"description": "Export data to iPACS_DW_DIM_Date"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SortByPrimaryKey"
+				},
+				{
+					"name": "CastDateAsTimestamp"
+				},
+				{
+					"name": "DerivedColumnDate",
+					"description": "Creating/updating the Date column."
+				},
+				{
+					"name": "AlterRowPlan"
+				},
+				{
+					"name": "JoinSourceToTarget"
+				},
+				{
+					"name": "SelectColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          DateKey as integer,",
+				"          Date as string,",
+				"          Year as integer,",
+				"          Quarter as integer,",
+				"          Month as integer,",
+				"          Day as integer,",
+				"          Weekday as integer,",
+				"          WeekOfYear as integer,",
+				"          MonthName as string,",
+				"          DayName as string",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: true,",
+				"     ignoreNoFilesFound: false,",
+				"     moveFiles: ['/inputs','outputs'],",
+				"     partitionBy('hash', 1)) ~> DimDatesFile",
+				"source(output(",
+				"          DateKey as integer,",
+				"          Date as timestamp,",
+				"          Year as integer,",
+				"          Quarter as integer,",
+				"          Month as integer,",
+				"          Day as integer,",
+				"          Weekday as integer,",
+				"          WeekOfYear as integer,",
+				"          MonthName as string,",
+				"          DayName as string",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: true,",
+				"     isolationLevel: 'REPEATABLE_READ',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> DimDateTargetTable",
+				"CastDateAsTimestamp sort(asc(DateKey, true),",
+				"     partitionBy('hash', 1)) ~> SortByPrimaryKey",
+				"DerivedColumnDate cast(output(",
+				"          Date as timestamp",
+				"     ),",
+				"     errors: true) ~> CastDateAsTimestamp",
+				"SelectColumns derive(Date = toString(Year) + '-' + lpad(toString(Month) ,2,'0') + '-' + lpad(toString(Day),2,'0') + ' 00:00:00.000') ~> DerivedColumnDate",
+				"SortByPrimaryKey alterRow(insertIf(isNull(DateKeyTarget)),",
+				"     updateIf(!isNull(DateKeyTarget))) ~> AlterRowPlan",
+				"DimDatesFile, DimDateTargetTable join(DimDatesFile@DateKey == DimDateTargetTable@DateKey,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> JoinSourceToTarget",
+				"JoinSourceToTarget select(mapColumn(",
+				"          DateKey = DimDatesFile@DateKey,",
+				"          Date = DimDatesFile@Date,",
+				"          Year = DimDatesFile@Year,",
+				"          Quarter = DimDatesFile@Quarter,",
+				"          Month = DimDatesFile@Month,",
+				"          Day = DimDatesFile@Day,",
+				"          Weekday = DimDatesFile@Weekday,",
+				"          WeekOfYear = DimDatesFile@WeekOfYear,",
+				"          MonthName = DimDatesFile@MonthName,",
+				"          DayName = DimDatesFile@DayName,",
+				"          DateKeyTarget = DimDateTargetTable@DateKey",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+				"AlterRowPlan sink(allowSchemaDrift: false,",
+				"     validateSchema: true,",
+				"     input(",
+				"          DateKey as integer,",
+				"          Date as timestamp,",
+				"          Year as integer,",
+				"          Quarter as integer,",
+				"          Month as integer,",
+				"          Day as integer,",
+				"          Weekday as integer,",
+				"          WeekOfYear as integer,",
+				"          MonthName as string,",
+				"          DayName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['DateKey'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          DateKey,",
+				"          Date,",
+				"          Year,",
+				"          Quarter,",
+				"          Month,",
+				"          Day,",
+				"          Weekday,",
+				"          WeekOfYear,",
+				"          MonthName,",
+				"          DayName",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> DIMDateTable"
+			]
+		}
+	}
+}

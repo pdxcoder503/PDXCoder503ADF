@@ -1,0 +1,7 @@
+{
+	"name": "SelfHosted-IR-CWS5008",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "Self hosted IR for connecting to on premise SQL Server \"CWS5008\\MSSQLSERVER2022\"."
+	}
+}

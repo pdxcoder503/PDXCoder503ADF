@@ -1,0 +1,29 @@
+{
+	"name": "CWS5008_MSSQLSERVER2022",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "On-Premises SQL Server Linked Service resource, using a selfhosted runtime.",
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "CWS5008\\MSSQLSERVER2022",
+			"database": "iPACS",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "sa",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault_LS",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "sa"
+			}
+		},
+		"connectVia": {
+			"referenceName": "SelfHosted-IR-CWS5008",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

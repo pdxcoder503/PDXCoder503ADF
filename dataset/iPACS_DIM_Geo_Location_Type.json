@@ -1,0 +1,30 @@
+{
+	"name": "iPACS_DIM_Geo_Location_Type",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase_iPACS_DW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GEO_LOC_TYPE_CD",
+				"type": "varchar"
+			},
+			{
+				"name": "GEO_LOC_TYPE_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "GEO_LOC_TYPE_DESC",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "etl",
+			"table": "DIM_Geo_Location_Type"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

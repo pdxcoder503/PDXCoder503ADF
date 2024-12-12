@@ -1,0 +1,25 @@
+{
+	"name": "AzureSqlDatabase_iPACS_DW",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "iPACS_DW Azure SQL Server database",
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "pdxcoder503.database.windows.net",
+			"database": "iPACS_DW",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "SQLAdmin",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault_LS",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "SQLAdmin"
+			}
+		}
+	}
+}
